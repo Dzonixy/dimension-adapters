@@ -66,6 +66,8 @@ const factoriesByAdapterType: { [adapterType: string]: string[] } = {
     'solLst',
     'joeLiquidityBook',
     'curve',
+    'subscan',
+    'polymarket:fees',
   ],
   'dexs': [
     'helpers/crypto-card',
@@ -144,6 +146,7 @@ export function getAdapterFromHelpers(
         }
       }
     } catch (error) {
+      // console.log(error)
       // Skip if factory doesn't exist or has errors
       continue;
     }

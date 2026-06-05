@@ -1,4 +1,4 @@
-import { exportBuilderAdapter, exportHIP3DeployerAdapter, exportValidatorStakingAdapter } from "../helpers/hyperliquid";
+import { exportBuilderAdapter, exportHIP3DeployerAdapter, exportValidatorStakingAdapter, type HyperliquidMarket } from "../helpers/hyperliquid";
 import { createFactoryExports } from "./registry";
 
 interface BuilderConfig {
@@ -7,10 +7,23 @@ interface BuilderConfig {
   deadFrom?: string;
   methodology?: any;
   extraReturnFields?: Record<string, any>;
+  breakdownFees?: boolean; // add breakdown fees labels
+  market?: HyperliquidMarket;
 }
 
 // Builder adapter configs for dexs: protocol name -> config
 const builderConfigs: Record<string, BuilderConfig> = {
+  "trust-wallet-perps": {
+    addresses: ["0x5af1b5f44207784dcb850bbb4143c5dcd1885f71"],
+    start: "2026-04-08",
+    methodology: {
+      Fees: "Builder code revenue from Hyperliquid Perps Trades.",
+      Revenue: "Builder code revenue from Hyperliquid Perps Trades.",
+      ProtocolRevenue: "Builder code revenue from Hyperliquid Perps Trades.",
+      HoldersRevenue: "No fees distributed to TWT token holders",
+    },
+    extraReturnFields: { dailyHoldersRevenue: "0" },
+  },
   "sushi-perps": {
     addresses: ["0x12ee177db3ceafedc639d023a29cc8588db3a4b9"],
     start: "2025-03-30",
@@ -41,6 +54,7 @@ const builderConfigs: Record<string, BuilderConfig> = {
       HoldersRevenue: "No fees distributed to token holders",
     },
     extraReturnFields: { dailyHoldersRevenue: "0" },
+    breakdownFees: true,
   },
   "metamask-perps": {
     addresses: ["0xe95a5e31904e005066614247d309e00d8ad753aa"],
@@ -51,6 +65,16 @@ const builderConfigs: Record<string, BuilderConfig> = {
       ProtocolRevenue: "Builder code revenue from Hyperliquid Perps Trades.",
     },
   },
+  "defi-saver-perps": {
+    addresses: ["0x40e9d9fEBa3Df27E1fB9a924264Bf775230D5260"],
+    start: "2026-06-01",
+    methodology: {
+      Fees: "Builder code revenue from Hyperliquid Perps Trades.",
+      Revenue: "Builder code revenue from Hyperliquid Perps Trades.",
+      ProtocolRevenue: "Builder code revenue from Hyperliquid Perps Trades.",
+    },
+    breakdownFees: true,
+  },
   "based-app": {
     addresses: ["0x1924b8561eef20e70ede628a296175d358be80e5"],
     start: "2025-07-08",
@@ -59,15 +83,18 @@ const builderConfigs: Record<string, BuilderConfig> = {
       Revenue: "builder code revenue from Hyperliquid Perps Trades.",
       ProtocolRevenue: "builder code revenue from Hyperliquid Perps Trades.",
     },
+    breakdownFees: true,
   },
-  "insilico": {
-    addresses: ["0x2868fc0d9786a740b491577a43502259efa78a39"],
-    start: "2024-10-27",
+  "blink-perps": {
+    addresses: ["0xc7bcb2eee9bbfbf875499960746bc52b2e1a75c6"],
+    start: "2026-05-23",
     methodology: {
-      Fees: "builder code revenue from Hyperliquid Perps Trades.",
-      Revenue: "builder code revenue from Hyperliquid Perps Trades.",
-      ProtocolRevenue: "builder code revenue from Hyperliquid Perps Trades.",
+      Fees: "Builder code fees paid by users on Hyperliquid perps via Blink (blink.lat).",
+      Revenue: "Builder code fees collected by Blink from Hyperliquid perps.",
+      ProtocolRevenue: "Builder code fees collected by Blink from Hyperliquid perps.",
+      HoldersRevenue: "No fees distributed to token holders",
     },
+    extraReturnFields: { dailyHoldersRevenue: "0" },
   },
   "phantom-perps": {
     addresses: ["0xb84168cf3be63c6b8dad05ff5d755e97432ff80b"],
@@ -87,7 +114,7 @@ const builderConfigs: Record<string, BuilderConfig> = {
       ProtocolRevenue: "builder code revenue from Hyperliquid Perps Trades.",
     },
   },
-  "arena-perps": { addresses: ["0x7056a6bc0a962b6ca37bc5da4c4c5127c81b7af3"], start: "2026-01-23" },
+  "arena-perps": { addresses: ["0x7056a6bc0a962b6ca37bc5da4c4c5127c81b7af3"], start: "2026-01-23", breakdownFees: true },
   "minaraai-perps": { addresses: ["0x5a3bc60b0a99a7f4fbf0d15554fa5fe88e7628c2"], start: "2025-12-22" },
   "apexliquid-perps": { addresses: ["0xe1f55f2f25884c2ddc86b6f7efa5f45b2ef04221"], start: "2025-07-06" },
   "coin98-perps": { addresses: ["0x3342ee6851ef0ec3cf42658c2be3b28a905271aa"], start: "2025-09-26" },
@@ -114,6 +141,15 @@ const builderConfigs: Record<string, BuilderConfig> = {
   },
   "gtr-trade-perps": { addresses: ["0x5ef4deeb76f87d979d0ddc8c51f5b4f65d1c972a"], start: "2025-06-17" },
   "hyprearn-perps": { addresses: ["0x70cf605bb180daf00c3e2f1ca3df5bb602664452"], start: "2025-09-01" },
+  "legend-trade": {
+    addresses: ["0x4e65de9ca0abe3d36f7e3d7a7ce9f0dbe406a412"],
+    start: "2026-01-29",
+    methodology: {
+      Fees: "Trading fees paid by users for perps on Legend.",
+      Revenue: "Builder code fees collected by Legend from Hyperliquid Perps.",
+      ProtocolRevenue: "Builder code fees collected by Legend from Hyperliquid Perps.",
+    },
+  },
   "katoshi-perps": {
     addresses: ["0x274e3cdb7bdc4805f41a07e3348243ba3e7e5b72"],
     start: "2025-08-01",
@@ -184,7 +220,24 @@ const builderConfigs: Record<string, BuilderConfig> = {
   "supurr-perps": { addresses: ["0x36be02a397e969e010ccbd7333f4169f66b8989f"], start: "2025-09-19" },
   "unigox-perps": { addresses: ["0xf8ead1ecc72dfbb87cdd7bf78450f7cf68d046a3"], start: "2025-09-01" },
   "uxuy-perps": { addresses: ["0x2e266a0f40e9f5bca48f5df1686aab10b1b68ec8"], start: "2025-10-20" },
-  "wunder-perps": { addresses: ["0x75982eb8b734b24b653b39e308489a428041f162"], start: "2025-10-19" }
+  "wunder-perps": { addresses: ["0x75982eb8b734b24b653b39e308489a428041f162"], start: "2025-10-19" },
+  "grider-perps": {
+    addresses: ["0x0176337c97bb884b8ac4be2276a5c779ab1156b9"], start: "2026-03-08",
+    methodology: {
+      Fees: "0.008% builder code fees paid by users on Hyperliquid Perps trades opened via GRIDer's grid trading bots.",
+      Revenue: "0.008% builder code fees collected by GRIDer from Hyperliquid Perps grid trading.",
+      ProtocolRevenue: "0.008% builder code fees collected by GRIDer from Hyperliquid Perps grid trading.",
+    },
+  },
+  "tradoor-perps": {
+    addresses: ["0x92345453cE2000642d7D4ceeae4FcCC6c2E41d23"],
+    start: "2026-02-20",
+    methodology: {
+      Fees: "Builder code fees paid by users on Hyperliquid Perps trades opened via Tradoor's automated market-making bots (also covers HIP-3 venues that settle on Hyperliquid such as Kinetiq Markets and Trade.xyz).",
+      Revenue: "Builder code revenue collected by Tradoor from Hyperliquid Perps Trades.",
+      ProtocolRevenue: "Builder code revenue collected by Tradoor from Hyperliquid Perps Trades.",
+    },
+  }
 };
 
 // Builder fees configs: protocol name -> config
@@ -208,6 +261,7 @@ const builderFeesConfigs: Record<string, BuilderConfig> = {
       Revenue: "builder code revenue from Hyperliquid Perps Trades.",
       ProtocolRevenue: "builder code revenue from Hyperliquid Perps Trades.",
     },
+    breakdownFees: true,
   },
   "bullpenfi-perps": {
     addresses: ["0x4c8731897503f86a2643959cbaa1e075e84babb7"],
@@ -281,13 +335,13 @@ const builderFeesConfigs: Record<string, BuilderConfig> = {
       ProtocolRevenue: "builder code revenue from Hyperliquid Perps Trades.",
     },
   },
-  "insilico": {
-    addresses: ["0x2868fc0d9786a740b491577a43502259efa78a39"],
-    start: "2024-10-27",
+  "legend-trade": {
+    addresses: ["0x4e65de9ca0abe3d36f7e3d7a7ce9f0dbe406a412"],
+    start: "2026-01-29",
     methodology: {
-      Fees: "builder code revenue from Hyperliquid Perps Trades.",
-      Revenue: "builder code revenue from Hyperliquid Perps Trades.",
-      ProtocolRevenue: "builder code revenue from Hyperliquid Perps Trades.",
+      Fees: "Trading fees paid by users for perps on Legend.",
+      Revenue: "Builder code fees collected by Legend from Hyperliquid Perps.",
+      ProtocolRevenue: "Builder code fees collected by Legend from Hyperliquid Perps.",
     },
   },
   "liminal-perps": {
@@ -576,7 +630,7 @@ const hip3OiConfigs: Record<string, string> = {
   "dreamcash-markets-oi": "cash",
   "felix-perp-oi": "flx",
   "hyena-oi": "hyna",
-  // "kinetiq-markets-oi": "km",
+  "kinetiq-markets-oi": "km",
   "tradexyz-oi": "xyz",
   "ventuals-oi": "vntl",
   "paragon-oi": "para",
@@ -598,6 +652,8 @@ for (const [name, config] of Object.entries(builderConfigs)) {
     deadFrom: config.deadFrom,
     methodology: config.methodology,
     extraReturnFields: config.extraReturnFields,
+    breakdownFees: config.breakdownFees,
+    market: config.market,
   });
 }
 for (const [name, config] of Object.entries(hip3DexConfigs)) {
@@ -616,6 +672,8 @@ for (const [name, config] of Object.entries(builderFeesConfigs)) {
     deadFrom: config.deadFrom,
     methodology: config.methodology,
     extraReturnFields: config.extraReturnFields,
+    breakdownFees: config.breakdownFees,
+    market: config.market,
   });
 }
 

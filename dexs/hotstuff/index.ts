@@ -37,7 +37,7 @@ async function fetch(_a: any, _b: any, options: FetchOptions) {
     return { dailyVolume };
 }
 
-const methodology = { Volume: "Daily trading volume is taken from Hotstuff's candlestick API" };
+const methodology = { Volume: "Daily perps trading volume is taken from Hotstuff's candlestick API" };
 
 const adapter: SimpleAdapter = {
     fetch,

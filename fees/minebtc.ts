@@ -50,6 +50,7 @@ const adapter: SimpleAdapter = {
     fetch,
     chains: [CHAIN.SOLANA],
     start: "2025-12-16",
+    deadFrom: "2026-05-19",
     methodology,
     dependencies: [Dependencies.ALLIUM],
 };

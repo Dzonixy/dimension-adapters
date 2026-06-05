@@ -3,13 +3,17 @@ import request, { gql } from "graphql-request";
 import { CHAIN } from "../../helpers/chains";
 import { METRIC } from "../../helpers/metrics";
 
-const GRAPH_URL = 'https://api.goldsky.com/api/public/project_cm97l77ib0cz601wlgi9wb0ec/subgraphs/hyperswap-v3/1.0.23/gn'
+const GRAPH_URL = 'https://api.subgraph.ormilabs.com/api/public/33c67399-d625-4929-b239-5709cd66e422/subgraphs/hyperswap-v3/v0.1.2/gn'
 // const SWAP_TOKEN = '0x03832767bdf9a8ef007449942125ad605acfadb8';
 // const BURN_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 const fetch = async (_a: any, _b: any, options: FetchOptions): Promise<FetchResultV2> => {
-  const dailyFees = options.createBalances()
   const dailyVolume = options.createBalances()
+  const dailyFees = options.createBalances()
+  const dailyRevenue = options.createBalances()
+  const dailyProtocolRevenue = options.createBalances()
+  const dailyHoldersRevenue = options.createBalances()
+  const dailySupplySideRevenue = options.createBalances()
 
   const query = gql`
       query q{
@@ -25,12 +29,12 @@ const fetch = async (_a: any, _b: any, options: FetchOptions): Promise<FetchResu
   data.uniswapDayDatas.forEach((e: any) => {
     dailyVolume.addUSDValue(Number(e.volumeUSD))
     dailyFees.addUSDValue(Number(e.feesUSD), METRIC.SWAP_FEES)
+    dailyRevenue.addUSDValue(Number(e.feesUSD) * 0.04, 'Token Swap Fees To Protocol')
+    dailyRevenue.addUSDValue(Number(e.feesUSD) * 0.12, 'Token Swap Fees To Buy Back And Burn SWAP')
+    dailyProtocolRevenue.addUSDValue(Number(e.feesUSD) * 0.04, 'Token Swap Fees To Protocol')
+    dailySupplySideRevenue.addUSDValue(Number(e.feesUSD) * 0.84, 'Token Swap Fees To LPs')
+    dailyHoldersRevenue.addUSDValue(Number(e.feesUSD) * 0.12, METRIC.TOKEN_BUY_BACK)
   })
-
-  const dailyRevenue = dailyFees.clone(0.16)
-  const dailyProtocolRevenue = dailyFees.clone(0.04)
-  const dailySupplySideRevenue = dailyFees.clone(0.84)
-  const dailyHoldersRevenue = dailyFees.clone(0.12, 'Token Burns')
 
   // const dailyHoldersRevenue = options.createBalances();
   // // Track token burns
@@ -69,7 +73,14 @@ const breakdownMethodology = {
     [METRIC.SWAP_FEES]: "Total swap fees paid by users.",
   },
   Revenue: {
-    'Token Burns': "12% of fees used for buy-back and burn.",
+    'Token Swap Fees To Protocol': "4% of fees collected by the protocol.",
+    'Token Swap Fees To Buy Back And Burn SWAP': "12% of fees used for buy-back and burn.",
+  },
+  SupplySideRevenue: {
+    'Token Swap Fees To LPs': "84% of fees distributed to LPs.",
+  },
+  HoldersRevenue: {
+    [METRIC.TOKEN_BUY_BACK]: "12% of fees used for buy-back and burn.",
   },
 }
 

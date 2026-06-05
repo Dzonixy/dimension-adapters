@@ -60,6 +60,7 @@ export const DefaultDexTokensBlacklisted: Record<string, Array<string>> = {
     "0xACB8f52DC63BB752a51186D1c55868ADbFfEe9C1",
     "0x8d010bf9c26881788b4e6bf5fd1bdc358c8f90b8",
     "0xBC33B4D48f76d17A1800aFcB730e8a6AAada7Fe5",
+    "0x96fb784986284cb6d4a8da6dd50dd7e85ef38f5d",
   ],
   [CHAIN.ARBITRUM]: [
     "0x2fcAA28BE8549F3953FCf7cae4CC9FBe6Ab2E501",
@@ -112,6 +113,7 @@ export const DefaultDexTokensBlacklisted: Record<string, Array<string>> = {
     "0xc8f8c5a9dff280cde517d197c82ee10fcb46bb07",
     "0x8d010bf9c26881788b4e6bf5fd1bdc358c8f90b8",
     "0xBC33B4D48f76d17A1800aFcB730e8a6AAada7Fe5",
+    "0x570b1533F6dAa82814B25B62B5c7c4c55eB83947",
   ],
 };
 
@@ -366,7 +368,7 @@ interface GetTokenListsOptions {
 }
 
 async function getTokenLists(options: GetTokenListsOptions): Promise<Array<string>> {
-  const blacklisted = getDefaultDexTokensBlacklisted(CHAIN.BSC)
+  const blacklisted = getDefaultDexTokensBlacklisted(options.chain)
   const tokens = new Set();
   for (const url of options.lists) {
     const data = await getConfig(`token-list-${url}`, url);

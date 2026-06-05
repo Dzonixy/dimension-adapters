@@ -21,7 +21,6 @@ const protocolChainMap: Record<string, string> = {
   "fantom": CHAIN.FANTOM,
   "flare": CHAIN.FLARE,
   "fuse": CHAIN.FUSE,
-  "gravity": CHAIN.GRAVITY,
   "harmony": CHAIN.HARMONY,
   "hashkey": CHAIN.HASHKEY,
   "hemi": CHAIN.HEMI,
@@ -64,7 +63,6 @@ const protocolChainMap: Record<string, string> = {
   "adventure-layer": CHAIN.ADVENTURE_LAYER,
   "deri-chain": CHAIN.DERI_CHAIN,
   "earnm": CHAIN.EARNM,
-  "duck-chain": CHAIN.DUCKCHAIN,
   "edu-chain": CHAIN.EDU_CHAIN,
   "ethereal": CHAIN.ETHEREAL,
   "eventum": CHAIN.EVENTUM,
@@ -107,7 +105,7 @@ const protocolChainMap: Record<string, string> = {
   "genesys": CHAIN.GENESYS,
   "grx-chain": CHAIN.GRX,
   "joc": CHAIN.JOC,
-  "karura": CHAIN.KARURA,
+  //"karura": CHAIN.KARURA, tracked in subscan
   "loop": CHAIN.LOOP,
   "cross": CHAIN.CROSS,
   "doma": CHAIN.DOMA,
@@ -118,6 +116,16 @@ const protocolChainMap: Record<string, string> = {
   "megaeth": CHAIN.MEGAETH,
   "katana-chain": CHAIN.KATANA,
   "coti": CHAIN.COTI,
+  "mezo": CHAIN.MEZO,
+  "world-mobile": CHAIN.WORLD_MOBILE,
+  "rise": CHAIN.RISE,
+  "citrea": CHAIN.CITREA,
+  "moca": CHAIN.MOCA,
+  "fluent": CHAIN.FLUENT,
+  "lukso": CHAIN.LUKSO,
+  "kasplex": CHAIN.KASPLEX,
+  "gatelayer": CHAIN.GATE_LAYER,
+  "igra": CHAIN.IGRA,
 }
 
 const deadFromMap: Record<string, string> = {

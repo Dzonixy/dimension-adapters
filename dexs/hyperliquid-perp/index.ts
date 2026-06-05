@@ -16,16 +16,20 @@ const breakdownMethodology = {
   Fees: {
     'Perp Fees': 'Perp trade fees collected as revenue, excluding spot fee.',
     'Builder Code Fees': 'Fees added on top by other platforms building on top of Hyperliquid.',
+    'Priority Fees': 'Fees from priority orders paid.',
   },
   Revenue: {
     'Perp Fees': '99% of perp trade fees, excluding spot fees and builders fees.',
+    'Priority Fees': 'Fees from priority orders paid.',
   },
   SupplySideRevenue: {
     'Builder Code Distribution': 'All extra fees added on top by builders are fully passed down to these platforms.',
     'HLP': '1% of the perp trade fees go to HLP vault (used to be 3% before 30 Aug 2025)',
+    'HIP-3 Deployer Distribution': 'Fees are distributed back to HIP-3 markets deployers.',
   },
   HoldersRevenue: {
-    [METRIC.TOKEN_BUY_BACK]: "99% of perp trade fees (excluding spot fees and builders fees) for buy back HYPE tokens."
+    [METRIC.TOKEN_BUY_BACK]: "99% of perp trade fees (excluding spot fees and builders fees) for buy back HYPE tokens.",
+    'HYPE Burn From Priority Fees': 'All prioroty fees will be used to buy and burn HYPE.',
   },
 }
 
@@ -66,16 +70,19 @@ async function fetch(_1: number, _: any,  options: FetchOptions): Promise<FetchR
     const dailyHoldersRevenue = options.createBalances()
 
     // all perp fees
-    dailyFees.add(result.dailyPerpRevenue, 'Perp Fees')
+    dailyFees.add(result.dailyPerpRevenue, 'Perp Fees') // = hyperliquid fees + deployer fees
     dailyFees.add(result.dailyBuildersRevenue, 'Builder Code Fees')
+    // dailyFees.add(result.dailyPriorityFeesUsd, 'Priority Fees')
 
-    // builders fees + 1% revenue
-    dailySupplySideRevenue.add(result.dailyPerpRevenue.clone(hlpShare), 'HLP')
+    dailySupplySideRevenue.add(result.dailyHyperliquidRevenue.clone(hlpShare), 'HLP')
     dailySupplySideRevenue.add(result.dailyBuildersRevenue, 'Builder Code Distribution')
+    dailySupplySideRevenue.add(result.dailyHip3DeployersRevenue, 'HIP-3 Deployer Distribution')
     
     // 99% of revenue
-    dailyRevenue.add(result.dailyPerpRevenue.clone(holdersShare), 'Perp Fees')
-    dailyHoldersRevenue.add(result.dailyPerpRevenue.clone(holdersShare), METRIC.TOKEN_BUY_BACK)
+    dailyRevenue.add(result.dailyHyperliquidRevenue.clone(holdersShare), 'Perp Fees')
+    // dailyRevenue.add(result.dailyPriorityFeesUsd, 'Priority Fees')
+    dailyHoldersRevenue.add(result.dailyHyperliquidRevenue.clone(holdersShare), METRIC.TOKEN_BUY_BACK)
+    // dailyHoldersRevenue.add(result.dailyPriorityFeesUsd, 'HYPE Burn From Priority Fees')
 
     return {
       dailyVolume,
